@@ -1,0 +1,73 @@
+{
+  "name": "@qlover/fe-node-lib",
+  "version": "0.0.0",
+  "description": "fe node lib tools",
+  "type": "module",
+  "private": false,
+  "exports": {
+    ".": {
+      "require": "./packages/lib/index.js",
+      "import": "./packages/lib/index.js",
+      "types": "./packages/types/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./packages/types/index.d.ts",
+  "files": [
+    "packages",
+    "package.json",
+    "README.md"
+  ],
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/qlover/fe-node-lib"
+  },
+  "homepage": "https://github.com/qlover/fe-node-lib#readme",
+  "scripts": {
+    "build": "echo \"no build script\"",
+    "eslint": "eslint packages tests --ext .js,.ts --cache --fix",
+    "lint": "eslint packages tests --ext .js,.ts --cache --fix",
+    "test": "ava",
+    "prettier": "prettier packages tests --write"
+  },
+  "keywords": [
+    "fe-node-cli",
+    "fe-node-utils"
+  ],
+  "author": "qlover",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devEngines": {
+    "node": ">=18.19.0"
+  },
+  "packageManager": "yarn@1.22.22",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "execa": "^9.3.0",
+    "lodash": "^4.17.21",
+    "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.6",
+    "@types/shelljs": "^0.8.15",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "ava": "^6.1.3",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^40.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-n": "^16.3.1",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "mock-stdio": "^1.0.3",
+    "prettier": "^3.1.0",
+    "sinon": "^18.0.0",
+    "strip-ansi": "^7.1.0",
+    "typescript": "*"
+  }
+}

@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { Shell, Logger } from '../../packages/lib/index.js';
+import { Shell, Logger } from '../packages/lib/index.js';
 
 const cwd = process.cwd();
 // pwd commnad only macos/linux

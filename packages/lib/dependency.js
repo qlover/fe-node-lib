@@ -1,4 +1,3 @@
-import { Files } from './Files.js';
 import { Logger } from './Logger.js';
 import { Shell } from './Shell.js';
 

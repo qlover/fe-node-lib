@@ -2,7 +2,6 @@ import shell from 'shelljs';
 import { execa } from 'execa';
 import { Logger } from './Logger.js';
 import lodash from 'lodash';
-import util from 'node:util';
 
 const format = (template = '', context = {}) => {
   const log = new Logger();
@@ -16,8 +15,6 @@ const format = (template = '', context = {}) => {
     throw error;
   }
 };
-
-const debug = util.debug('fe-node-lib:shell');
 
 const noop = Promise.resolve();
 
@@ -90,7 +87,7 @@ export class Shell {
         { async: true, ...options },
         (code, stdout, stderr) => {
           stdout = stdout.toString().trimEnd();
-          debug({ command, options, code, stdout, stderr });
+          // debug({ command, options, code, stdout, stderr });
           if (code === 0) {
             resolve(stdout);
           } else {
@@ -115,13 +112,13 @@ export class Shell {
       const { stdout: out, stderr } = await execa(program, programArgs);
       const stdout = out === '""' ? '' : out;
       this.log.verbose(stdout, { isExternal });
-      debug({ command, options, stdout, stderr });
+      // debug({ command, options, stdout, stderr });
       return Promise.resolve(stdout || stderr);
     } catch (error) {
       if (error.stdout) {
         this.log.log(`\n${error.stdout}`);
       }
-      debug({ error });
+      // debug({ error });
       return Promise.reject(new Error(error.stderr || error.message));
     }
   }

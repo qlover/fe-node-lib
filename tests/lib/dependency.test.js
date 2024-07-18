@@ -1,6 +1,6 @@
 import test from 'ava';
-import { Dependency } from '../../packages/lib/dependency.js';
-import { Files } from '../../packages/lib/files.js';
+import { Dependency } from '../../packages/lib/Dependency.js';
+import { Files } from '../../packages/lib/Files.js';
 import { resolve } from 'path';
 
 test('Local Ava has been installed', async (t) => {

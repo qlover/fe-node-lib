@@ -2,7 +2,7 @@ import { EOL } from 'node:os';
 import test from 'ava';
 import mockStdIo from 'mock-stdio';
 import stripAnsi from 'strip-ansi';
-import { Logger } from '../../packages/lib/logger.js';
+import { Logger } from '../../packages/lib/Logger.js';
 
 test('should write to stdout', (t) => {
   const log = new Logger();

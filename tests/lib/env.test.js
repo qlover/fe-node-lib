@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Env } from '../../packages/lib/env.js';
+import { Env } from '../../packages/lib/Env.js';
 
 test('should be test env', async (t) => {
   const result = Env.get('NODE_ENV');

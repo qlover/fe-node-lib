@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Files } from '../../packages/lib/files.js';
+import { Files } from '../../packages/lib/Files.js';
 import { resolve } from 'path';
 
 test('should be print fe-node-lib package name', async (t) => {

@@ -1,6 +1,6 @@
 import shell from 'shelljs';
 import { execa } from 'execa';
-import { Logger } from './logger.js';
+import { Logger } from './Logger.js';
 import lodash from 'lodash';
 import util from 'node:util';
 

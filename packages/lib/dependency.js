@@ -1,6 +1,5 @@
-import { Files } from './files.js';
-import { Logger } from './logger.js';
-import { Shell } from './shell.js';
+import { Logger } from './Logger.js';
+import { Shell } from './Shell.js';
 
 const log = new Logger();
 const shell = new Shell();

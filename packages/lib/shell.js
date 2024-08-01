@@ -53,16 +53,15 @@ export class Shell {
   async execFormattedCommand(command, options = {}) {
     const { isDryRun } = this.config;
     const isWrite = options.write !== false;
-    const isExternal = options.external === true;
     const cacheKey = typeof command === 'string' ? command : command.join(' ');
-    const isCached = !isExternal && this.cache.has(cacheKey);
+    const isCached = this.cache.has(cacheKey);
 
     if (isDryRun && isWrite) {
       this.log.exec(command, { isDryRun });
       return noop;
     }
 
-    this.log.exec(command, { isExternal, isCached });
+    this.log.exec(command);
 
     if (isCached) {
       return this.cache.get(cacheKey);
@@ -70,24 +69,24 @@ export class Shell {
 
     const result =
       typeof command === 'string'
-        ? this.execStringCommand(command, options, { isExternal })
-        : this.execWithArguments(command, options, { isExternal });
+        ? this.execStringCommand(command, options)
+        : this.execWithArguments(command, options);
 
-    if (!isExternal && !this.cache.has(cacheKey)) {
+    if (!this.cache.has(cacheKey)) {
       this.cache.set(cacheKey, result);
     }
 
     return result;
   }
 
-  execStringCommand(command, options, { isExternal }) {
+  execStringCommand(command, options) {
     return new Promise((resolve, reject) => {
-      shell.exec(
+      const childProcess = shell.exec(
         command,
         { async: true, ...options },
         (code, stdout, stderr) => {
           stdout = stdout.toString().trimEnd();
-          // debug({ command, options, code, stdout, stderr });
+          this.log.debug({ command, options, code, stdout, stderr });
           if (code === 0) {
             resolve(stdout);
           } else {
@@ -96,29 +95,26 @@ export class Shell {
           }
         }
       );
-      // childProcess.stdout.on('data', (stdout) =>
-      //   this.log.verbose(stdout.toString().trimEnd(), { isExternal })
-      // );
-      // childProcess.stderr.on('data', (stderr) =>
-      //   this.log.verbose(stderr.toString().trimEnd(), { isExternal })
-      // );
+      childProcess.stdout.on('data', (stdout) =>
+        this.log.verbose(stdout.toString().trimEnd())
+      );
+      childProcess.stderr.on('data', (stderr) =>
+        this.log.verbose(stderr.toString().trimEnd())
+      );
     });
   }
 
-  async execWithArguments(command, options, { isExternal }) {
+  async execWithArguments(command, options) {
     const [program, ...programArgs] = command;
 
     try {
       const { stdout: out, stderr } = await execa(program, programArgs);
       const stdout = out === '""' ? '' : out;
-      this.log.verbose(stdout, { isExternal });
-      // debug({ command, options, stdout, stderr });
+      this.log.verbose(stdout);
+      this.log.debug({ command, options, stdout, stderr });
       return Promise.resolve(stdout || stderr);
     } catch (error) {
-      if (error.stdout) {
-        this.log.log(`\n${error.stdout}`);
-      }
-      // debug({ error });
+      this.log.debug({ error });
       return Promise.reject(new Error(error.stderr || error.message));
     }
   }

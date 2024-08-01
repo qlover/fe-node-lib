@@ -1,7 +1,5 @@
-import { Logger } from './Logger.js';
 import { Shell } from './Shell.js';
 
-const log = new Logger();
 const shell = new Shell();
 /**
  * Used to check dependencies
@@ -40,10 +38,10 @@ export class Dependency {
   static async checkWithInstall(packageName) {
     const hasDeep = await Dependency.checkDependency(packageName, true);
     if (!(hasDeep.local || hasDeep.global)) {
-      log.error(`${packageName} not found, installing ${packageName}`);
+      console.error(`${packageName} not found, installing ${packageName}`);
       await shell.exec(`npm i -g ${packageName}`, { silent: true });
     }
     const version = await Dependency.getDependencyVersion(packageName);
-    log.log(`${packageName} version is: v${version.version}`);
+    console.log(`${packageName} version is: v${version.version}`);
   }
 }

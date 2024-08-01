@@ -2,63 +2,76 @@ import { EOL } from 'node:os';
 import chalk from 'chalk';
 import lodash from 'lodash';
 
-const { isObject, last, filter, isString, lowerCase, upperFirst, isArray } =
+const { first, last, isObject, isString, lowerCase, upperFirst, isArray } =
   lodash;
+const { green, bold, yellow, red, grey } = chalk;
+
+const LEVELS = {
+  LOG: 'LOG',
+  INFO: 'INFO',
+  ERROR: 'ERROR',
+  WARN: 'WARN',
+  DEBUG: 'DEBUG'
+};
 
 export class Logger {
-  constructor({
-    isCI = true,
-    isVerbose = false,
-    verbosityLevel = 0,
-    isDryRun = false
-  } = {}) {
+  constructor({ isCI = false, dryRun = false, debug = false } = {}) {
     this.isCI = isCI;
-    this.isVerbose = isVerbose;
-    this.verbosityLevel = verbosityLevel;
-    this.isDryRun = isDryRun;
+    this.isDryRun = dryRun;
+    this.isDebug = debug;
   }
 
-  shouldLog(isExternal) {
-    return this.verbosityLevel === 2 || (this.isVerbose && isExternal);
-  }
-
-  log(...args) {
+  /**
+   * Basic logging methods.
+   * @param {string} level it can be any string, inner use `LEVELS`
+   * @param  {...any} args
+   */
+  print(level, ...args) {
     console.log(...args);
   }
 
-  error(...args) {
-    console.error(chalk.red('ERROR'), ...args);
+  log(...args) {
+    this.print(LEVELS.LOG, ...args);
   }
 
   info(...args) {
-    this.log(chalk.grey(...args));
+    this.print(LEVELS.INFO, green('INFO'), ...args);
   }
 
   warn(...args) {
-    this.log(chalk.yellow('WARNING'), ...args);
+    this.print(LEVELS.WARN, yellow('WARNING'), ...args);
+  }
+
+  error(...args) {
+    this.print(LEVELS.ERROR, red('ERROR'), ...args);
+  }
+
+  debug(...args) {
+    if (this.isDebug) {
+      const firstArg = first(args);
+      const firstValue = isObject(firstArg)
+        ? JSON.stringify(firstArg)
+        : firstArg;
+
+      this.print(LEVELS.DEBUG, grey('DEBUG'), firstValue, ...args.slice(1));
+    }
   }
 
   verbose(...args) {
-    const { isExternal } = isObject(last(args)) ? last(args) : {};
-    if (this.shouldLog(isExternal)) {
-      this.log(...filter(args, isString));
+    if (this.isDebug) {
+      // use purple color
+      this.print(LEVELS.DEBUG, ...args);
     }
   }
 
   exec(...args) {
-    const {
-      isDryRun: isExecutedInDryRun,
-      isExternal,
-      isCached
-    } = isObject(last(args)) ? last(args) : {};
-    if (this.shouldLog(isExternal) || this.isDryRun) {
+    const { isDryRun, isExternal: isExecutedInDryRun } = last(args) || {};
+    if (isDryRun || this.isDryRun || isExecutedInDryRun) {
       const prefix = isExecutedInDryRun == null ? '$' : '!';
       const command = args
         .map((cmd) => (isString(cmd) ? cmd : isArray(cmd) ? cmd.join(' ') : ''))
         .join(' ');
-      const message = [prefix, command, isCached ? '[cached]' : '']
-        .join(' ')
-        .trim();
+      const message = [prefix, command].join(' ').trim();
       this.log(message);
     }
   }
@@ -71,19 +84,11 @@ export class Logger {
 
   preview({ title, text }) {
     if (text) {
-      const header = chalk.bold(upperFirst(title));
+      const header = bold(upperFirst(title));
       const body = text.replace(new RegExp(EOL + EOL, 'g'), EOL);
       this.obtrusive(`${header}:${EOL}${body}`);
     } else {
       this.obtrusive(`Empty ${lowerCase(title)}`);
     }
-  }
-
-  success(...args) {
-    this.log(chalk.green('SUCCESS'), ...args);
-  }
-
-  test(...args) {
-    this.log(chalk.cyan('TEST: '), ...args);
   }
 }

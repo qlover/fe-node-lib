@@ -90,7 +90,6 @@ export class Shell {
           if (code === 0) {
             resolve(stdout);
           } else {
-            this.log.error(command);
             reject(new Error(stderr || stdout));
           }
         }
@@ -110,7 +109,6 @@ export class Shell {
     try {
       const { stdout: out, stderr } = await execa(program, programArgs);
       const stdout = out === '""' ? '' : out;
-      this.log.verbose(stdout);
       this.log.debug({ command, options, stdout, stderr });
       return Promise.resolve(stdout || stderr);
     } catch (error) {
